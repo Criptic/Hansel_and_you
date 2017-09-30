@@ -15,7 +15,7 @@
 
 var speechOutput;
 var reprompt;
-var welcomeOutput = "This is a placeholder welcome message. This skill includes 13 intents. Try one of your intent utterances to test the skill.";
+var welcomeOutput = "This is a placeholder welcome message. This skill includes 11 intents. Try one of your intent utterances to test the skill.";
 var welcomeReprompt = "sample re-prompt text";
  // 2. Skill Code =======================================================================================================
 "use strict";
@@ -44,52 +44,36 @@ var handlers = {
         //this.emit(':saveState', true);//uncomment to save attributes to db on session end
         this.emit(':tell', speechOutput);
     },
-	"BedIntent": function () {
+	"Bed": function () {
 		var speechOutput = "";
     	//any intent slot variables are listed here for convenience
 
     	//Your custom intent handling goes here
-    	speechOutput = "This is a place holder response for the intent named BedIntent. This intent has no slots. Anything else?";
+    	speechOutput = "This is a place holder response for the intent named Bed. This intent has no slots. Anything else?";
         this.emit(":ask", speechOutput, speechOutput);
     },
-	"CarpetIntent": function () {
+	"Carpet": function () {
 		var speechOutput = "";
     	//any intent slot variables are listed here for convenience
 
     	//Your custom intent handling goes here
-    	speechOutput = "This is a place holder response for the intent named CarpetIntent. This intent has no slots. Anything else?";
+    	speechOutput = "This is a place holder response for the intent named Carpet. This intent has no slots. Anything else?";
         this.emit(":ask", speechOutput, speechOutput);
     },
-	"DoorCloseIntent": function () {
+	"Door": function () {
 		var speechOutput = "";
     	//any intent slot variables are listed here for convenience
 
     	//Your custom intent handling goes here
-    	speechOutput = "This is a place holder response for the intent named DoorCloseIntent. This intent has no slots. Anything else?";
+    	speechOutput = "This is a place holder response for the intent named Door. This intent has no slots. Anything else?";
         this.emit(":ask", speechOutput, speechOutput);
     },
-	"DoorOpenIntent": function () {
+	"Key": function () {
 		var speechOutput = "";
     	//any intent slot variables are listed here for convenience
 
     	//Your custom intent handling goes here
-    	speechOutput = "This is a place holder response for the intent named DoorOpenIntent. This intent has no slots. Anything else?";
-        this.emit(":ask", speechOutput, speechOutput);
-    },
-	"KeyLookIntent": function () {
-		var speechOutput = "";
-    	//any intent slot variables are listed here for convenience
-
-    	//Your custom intent handling goes here
-    	speechOutput = "This is a place holder response for the intent named KeyLookIntent. This intent has no slots. Anything else?";
-        this.emit(":ask", speechOutput, speechOutput);
-    },
-	"KeyTakeIntent": function () {
-		var speechOutput = "";
-    	//any intent slot variables are listed here for convenience
-
-    	//Your custom intent handling goes here
-    	speechOutput = "This is a place holder response for the intent named KeyTakeIntent. This intent has no slots. Anything else?";
+    	speechOutput = "This is a place holder response for the intent named Key. This intent has no slots. Anything else?";
         this.emit(":ask", speechOutput, speechOutput);
     },
 	"NoIntent": function () {
@@ -100,12 +84,12 @@ var handlers = {
     	speechOutput = "This is a place holder response for the intent named NoIntent. This intent has no slots. Anything else?";
         this.emit(":ask", speechOutput, speechOutput);
     },
-	"NoteIntent": function () {
+	"Note": function () {
 		var speechOutput = "";
     	//any intent slot variables are listed here for convenience
 
     	//Your custom intent handling goes here
-    	speechOutput = "This is a place holder response for the intent named NoteIntent. This intent has no slots. Anything else?";
+    	speechOutput = "This is a place holder response for the intent named Note. This intent has no slots. Anything else?";
         this.emit(":ask", speechOutput, speechOutput);
     },
 	"StartIntent": function () {
