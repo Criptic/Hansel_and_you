@@ -10,3 +10,4 @@ Easy. You might already know some kind of interactive adventure books or somethi
 * Amazon Echo Skill
 * Explore an amazing world full of adventures and things to explore
 * Write your own stories and share them with people
+* Connect with Philips Hue
