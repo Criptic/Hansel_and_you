@@ -10,10 +10,16 @@ Easy. You might already know some kind of interactive adventure books or somethi
 To achieve this goal we decided to develop an Amazon Alexa Skill that will enable that kind of experience for you. On the one hand, you can listen to the story just like a regular Audiobook. But on the other hand you are the one who decides how the story will continue. What will happen to the world? What will happen to the characters? You have the power. Because it is your story. 
 
 ## The technical part
+### The Skill set
+### The voice of the story (Polly)
+### Making decisions
+### Bringing atmosphere (Phillips Hue)
 
 ## Our Sample story
+In our short little sample story we will give you a brief introduction and overview in the world of interactive, voice driven stories.  
+
+You're waking up in a room. No idea how you get there or where you actually are. But you know you have to get out of here. This isn't a nice kind of room you would be in for a longer period of time. You observe the environment and explore different corners of the room. Maybe you can find something useful. 
+
+## One step further
 
 
-* Amazon Echo Skill
-* Explore an amazing world full of adventures and things to explore
-* Write your own stories and share them with people
