@@ -117,20 +117,11 @@ var handlers = {
         this.emit(":ask", speechOutput, speechOutput);
     },
 	"StartIntent": function () {
-
       var self = this;
-      var scenes = ["ktD4qe8pAqoL8C-", "x3eD2gsrIVXxeaX", "yPfT4I1UlKOnrGt"];
-      var i = 0;
-      interval = setInterval(()=>{
-        setColor(scenes[i]);
-        i++;
-        if(i == 2){
-          i = 0;
-        }
-      }, 2000);
-
-      speechOutput = "You wake up in a room. Looking around you see a rugged carpet on the floor, a bed and a closed door. What do you want to do?";
-      setTimeout(()=>{this.emit(':ask', speechOutput, speechOutput)}, 12000);
+      startColorAnimation().then(() => {
+        speechOutput = "You wake up in a room. Looking around you see a rugged carpet on the floor, a bed and a closed door. What do you want to do?";
+        self.emit(':ask', speechOutput, speechOutput);
+      });
     },
 	"Unhandled": function () {
       var speechOutput = "The skill didn't quite understand what you wanted. Do you want to try something else?";
@@ -145,46 +136,22 @@ exports.handler = (event, context) => {
     alexa.execute();
 };
 
-function setColor(sceneId){
-  var req = http.request(options, function (res) {
-    var chunks = [];
+function startColorAnimation(){
+  return new Promise(function (fulfill, reject){
+    var req = http.request(options, function (res) {
+      var chunks = [];
 
-    res.on("data", function (chunk) {
-      chunks.push(chunk);
+      res.on("data", function (chunk) {
+        chunks.push(chunk);
+      });
+
+      res.on("end", fulfill);
     });
 
-    //res.on("end", fulfill);
+    req.write('{"scene":"ktD4qe8pAqoL8C-"}');
+    req.end();
   });
-
-  req.write('{"scene":"'+sceneId+'"}');
-  req.end();
 }
-
-function rgbToxy(red,green,blue){
-  	//Gamma correctie
-  	red = (red > 0.04045) ? Math.pow((red + 0.055) / (1.0 + 0.055), 2.4) : (red / 12.92);
-  	green = (green > 0.04045) ? Math.pow((green + 0.055) / (1.0 + 0.055), 2.4) : (green / 12.92);
-  	blue = (blue > 0.04045) ? Math.pow((blue + 0.055) / (1.0 + 0.055), 2.4) : (blue / 12.92);
-
-  	//Apply wide gamut conversion D65
-  	var X = red * 0.664511 + green * 0.154324 + blue * 0.162028;
-  	var Y = red * 0.283881 + green * 0.668433 + blue * 0.047685;
-  	var Z = red * 0.000088 + green * 0.072310 + blue * 0.986039;
-
-  	var fx = X / (X + Y + Z);
-  	var fy = Y / (X + Y + Z);
-  	if (isnan(fx)) {
-      	fx = 0.0;
-  	}
-  	if (isnan(fy)) {
-      	fy = 0.0;
-  	}
-
-  	return [fx.toPrecision(4),fy.toPrecision(4)];
-}
-
-//    END of Intent Handlers {} ========================================================================================
-// 3. Helper Function  =================================================================================================
 
 function resolveCanonical(slot){
 	//this function looks at the entity resolution part of request and returns the slot value if a synonyms is provided
