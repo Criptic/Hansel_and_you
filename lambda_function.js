@@ -24,6 +24,7 @@ var APP_ID = undefined;  // TODO replace with your app ID (OPTIONAL).
 var speechOutput = '';
 var handlers = {
     'LaunchRequest': function () {
+      setupAttributes();
           this.emit(':ask', welcomeOutput, welcomeReprompt);
     },
 	'AMAZON.HelpIntent': function () {
@@ -49,21 +50,26 @@ var handlers = {
     	//any intent slot variables are listed here for convenience
 
     	//Your custom intent handling goes here
-    	speechOutput = "This is a place holder response for the intent named Bed. This intent has no slots. Anything else?";
-        this.emit(":ask", speechOutput, speechOutput);
+    	speechOutput = "There’s a note under the bed with this sentence written on it: A key is hidden under the carpet.";
+      this.emit(":ask", speechOutput, speechOutput);
     },
 	"Carpet": function () {
 		var speechOutput = "";
     	//any intent slot variables are listed here for convenience
-
+      if(this.attributes.carpet.keyIsThere){
+    	   speechOutput = "This is a place holder response for the intent named Carpet. This intent has no slots. Anything else?";
+      }else{
+        speechOutput = "This is a place holder response for the intent named Carpet. This intent has no slots. Anything else?";
+      }
     	//Your custom intent handling goes here
-    	speechOutput = "This is a place holder response for the intent named Carpet. This intent has no slots. Anything else?";
         this.emit(":ask", speechOutput, speechOutput);
     },
 	"Door": function () {
 		var speechOutput = "";
     	//any intent slot variables are listed here for convenience
-
+      if(this.attributes.key.found){
+        this.attributes.door.opened = true;
+      }
     	//Your custom intent handling goes here
     	speechOutput = "This is a place holder response for the intent named Door. This intent has no slots. Anything else?";
         this.emit(":ask", speechOutput, speechOutput);
@@ -71,7 +77,8 @@ var handlers = {
 	"Key": function () {
 		var speechOutput = "";
     	//any intent slot variables are listed here for convenience
-
+      this.attributes.carpet.keyIsThere = false;
+      this.attributes.key.found = true;
     	//Your custom intent handling goes here
     	speechOutput = "This is a place holder response for the intent named Key. This intent has no slots. Anything else?";
         this.emit(":ask", speechOutput, speechOutput);
@@ -82,14 +89,6 @@ var handlers = {
 
     	//Your custom intent handling goes here
     	speechOutput = "This is a place holder response for the intent named NoIntent. This intent has no slots. Anything else?";
-        this.emit(":ask", speechOutput, speechOutput);
-    },
-	"Note": function () {
-		var speechOutput = "";
-    	//any intent slot variables are listed here for convenience
-
-    	//Your custom intent handling goes here
-    	speechOutput = "This is a place holder response for the intent named Note. This intent has no slots. Anything else?";
         this.emit(":ask", speechOutput, speechOutput);
     },
 	"StartIntent": function () {
@@ -113,6 +112,17 @@ var handlers = {
         this.emit(':ask', speechOutput, speechOutput);
     }
 };
+
+function setupAttributes(){
+  this.attributes.door = {};
+  this.attributes.door.opened = false;
+
+  this.attributes.carpet = {};
+  this.attributes.carpet.keyIsThere = true;
+
+  this.attributes.key = {};
+  this.attributes.key.found = false;
+}
 
 exports.handler = (event, context) => {
     var alexa = Alexa.handler(event, context);
