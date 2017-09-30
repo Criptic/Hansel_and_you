@@ -1,27 +1,14 @@
-/* This code has been generated from your interaction model
-
-/* eslint-disable  func-names */
-/* eslint quote-props: ["error", "consistent"]*/
-
-// There are three sections, Text Strings, Skill Code, and Helper Function(s).
-// You can copy and paste the contents as the code for a new Lambda function, using the alexa-skill-kit-sdk-factskill template.
-// This code includes helper functions for compatibility with versions of the SDK prior to 1.0.9, which includes the dialog directives.
-
-
-
- // 1. Text strings =====================================================================================================
- //    Modify these strings and messages to change the behavior of your Lambda function
-
-
 var speechOutput;
 var reprompt;
 var welcomeOutput = "Welcome to Hansel and you. Say start to start.";
 var welcomeReprompt = "sample re-prompt text";
- // 2. Skill Code =======================================================================================================
+
 "use strict";
 var Alexa = require('alexa-sdk');
+var AWS = require("aws-sdk");
 var APP_ID = undefined;  // TODO replace with your app ID (OPTIONAL).
 var speechOutput = '';
+var interval;
 
 var http = require("https");
 
@@ -29,13 +16,12 @@ var options = {
   "method": "PUT",
   "hostname": "api.meethue.com",
   "port": null,
-  "path": "/v2/bridges/001788fffe200470/nS7IqOD-R8KClDzm3Wq7Oqo-yq2QRpOCXEnRn2d3/groups/0/action",
+  "path": "/v2/bridges/001788fffe200470/nS7IqOD-R8KClDzm3Wq7Oqo-yq2QRpOCXEnRn2d3/groups/2/action",
   "headers": {
     "Authorization": "Bearer mSVWYub0KNB1dSDjDrbjRg8sac2J",
     "Content-Type": "application/json"
   }
 };
-
 
 var handlers = {
     'LaunchRequest': function () {
@@ -48,7 +34,30 @@ var handlers = {
       this.attributes["key"] = {};
       this.attributes["key"].found = false;
 
-      this.emit(':ask', welcomeOutput, welcomeReprompt);
+      var self = this;
+
+      AWS.config.update({
+        region: "eu-west-1",
+        endpoint: "dynamodb.eu-west-1.amazonaws.com"
+      });
+
+      var docClient = new AWS.DynamoDB.DocumentClient()
+      var params = {
+          TableName: "stories_audio_files",
+          Key:{ "id": 1 }
+      };
+
+      docClient.get(params, function(err, data) {
+          if (err) {
+              console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+              this.emit(':tell', "I couldn't load the story.");
+          } else {
+              self.attributes['url'] = data.Item.audio;
+              speechOutput = '<audio src="'+ data.Item.audio +'" />';
+              self.response.speak(speechOutput);
+              self.emit(':responseReady')
+          }
+      });
     },
 	'AMAZON.HelpIntent': function () {
         speechOutput = '';
@@ -63,28 +72,32 @@ var handlers = {
         speechOutput = '';
         this.emit(':tell', speechOutput);
     },
-    'SessionEndedRequest': function () {
-        speechOutput = '';
-        this.emit(':tell', speechOutput);
+    "AMAZON.PauseIntent": function () {
+  		var speechOutput = "";
+      this.emit(':tell', speechOutput);
     },
+	"AMAZON.ResumeIntent": function () {
+    this.emit(':tell', speechOutput);
+    },
+  'SessionEndedRequest': function () {
+      speechOutput = '';
+      this.emit(':tell', speechOutput);
+  },
 	"Bed": function () {
     	speechOutput = "There’s a note under the bed with this sentence written on it: A key is hidden under the carpet.";
       this.emit(":ask", speechOutput, speechOutput);
     },
 	"Carpet": function () {
-		var speechOutput = "";
-    	//any intent slot variables are listed here for convenience
       if(this.attributes["carpet"].keyIsThere){
     	   speechOutput = "There is an old rusty key under the carpet. What do you want to do?";
       }else{
         speechOutput = "There is nothing here anymore.";
       }
-    	//Your custom intent handling goes here
-        this.emit(":ask", speechOutput, speechOutput);
+
+      this.emit(":ask", speechOutput, speechOutput);
     },
 	"Door": function () {
 		var speechOutput = "";
-    	//any intent slot variables are listed here for convenience
       if(this.attributes["key"].found){
         this.attributes["door"].opened = true;
         speechOutput = "With a sigh of relief you step out of the room you were trapped in and take a deep breath of fresh spring air and enjoy the sunshine.";
@@ -93,7 +106,6 @@ var handlers = {
         speechOutput = "The door is closed, you will need a key to open this door."
         this.emit(":ask", speechOutput, speechOutput);
       }
-
     },
 	"Key": function () {
 		var speechOutput = "";
@@ -105,11 +117,20 @@ var handlers = {
         this.emit(":ask", speechOutput, speechOutput);
     },
 	"StartIntent": function () {
-    setColor().then(() =>{
-      var speechOutput = "";
+
+      var self = this;
+      var scenes = ["ktD4qe8pAqoL8C-", "x3eD2gsrIVXxeaX", "yPfT4I1UlKOnrGt"];
+      var i = 0;
+      interval = setInterval(()=>{
+        setColor(scenes[i]);
+        i++;
+        if(i == 2){
+          i = 0;
+        }
+      }, 2000);
+
       speechOutput = "You wake up in a room. Looking around you see a rugged carpet on the floor, a bed and a closed door. What do you want to do?";
-      this.emit(":ask", speechOutput, speechOutput);
-    });
+      setTimeout(()=>{this.emit(':ask', speechOutput, speechOutput)}, 12000);
     },
 	"Unhandled": function () {
       var speechOutput = "The skill didn't quite understand what you wanted. Do you want to try something else?";
@@ -120,32 +141,23 @@ var handlers = {
 exports.handler = (event, context) => {
     var alexa = Alexa.handler(event, context);
     alexa.APP_ID = APP_ID;
-    // To enable string internationalization (i18n) features, set a resources object.
-    //alexa.resources = languageStrings;
     alexa.registerHandlers(handlers);
-	//alexa.dynamoDBTableName = 'DYNAMODB_TABLE_NAME'; //uncomment this line to save attributes to DB
     alexa.execute();
 };
 
-function setColor(){
-  return new Promise(function (fulfill, reject){
-    var req = http.request(options, function (res) {
-      var chunks = [];
+function setColor(sceneId){
+  var req = http.request(options, function (res) {
+    var chunks = [];
 
-      res.on("data", function (chunk) {
-        chunks.push(chunk);
-      });
-
-      res.on("end", function () {
-        var body = Buffer.concat(chunks);
-        console.log(body.toString());
-        fulfill();
-      });
+    res.on("data", function (chunk) {
+      chunks.push(chunk);
     });
 
-    req.write('{"bri":1,"xy":[0.1,0.1]}');
-    req.end();
+    //res.on("end", fulfill);
   });
+
+  req.write('{"scene":"'+sceneId+'"}');
+  req.end();
 }
 
 function rgbToxy(red,green,blue){
