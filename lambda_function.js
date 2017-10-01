@@ -103,6 +103,17 @@ var handlers = {
       }
     },
 	"StartIntent": function () {
+      this.attributes["carpet"] = {};
+      this.attributes["carpet"].noteIsThere = true;
+
+      this.attributes["little_key"] = {};
+      this.attributes["little_key"].found = false;
+
+      this.attributes["big_key"] = {};
+      this.attributes["big_key"].found = false;
+
+      this.attributes["timeoutcounter"] = 0;
+      
       var self = this;
       setColorAnimation(1)
         .then(() => {playAudioWithId(self, START_ID)
