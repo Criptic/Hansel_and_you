@@ -39,11 +39,9 @@
 
     <div class="container">
       <h1>Your awesome story.</h1>
-      <div class="col-2 top-space"></div>
-      <div class="col-8" id="sectionContainer">
+      <div class="col-12 top-space" id="sectionContainer">
 
       </div>
-      <div class="col-2"></div>
     </div>
 
     <div class="modal fade" id="sectionModal">
@@ -56,7 +54,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <form>
+            <form id="sectionForm">
               <div class="form-group">
                 <label for="title">Section title</label>
                 <input type="text" name="title" id="title" class="form-control" required>
@@ -73,10 +71,11 @@
                   <option value="door">Door</option>
                 </select>
               </div>
+              <input type="hidden" name="sectionId" id="sectionId" val="">
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="submit" class="btn btn-primary" form="sectionForm">Save changes</button>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           </div>
         </div>
