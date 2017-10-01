@@ -39,11 +39,11 @@ body{
   height: 400px;
 }
 
-#get-started-btn{
-  background-color: #50E3C2;
-  border: none;
+.btn-primary{
+  background-color: #50E3C2 !important;
+  border: none !important;
 }
 
-#get-started-btn:hover {
-  background-color: #249FAF;
+.btn-primary:hover {
+  background-color: #249FAF !important;
 }
