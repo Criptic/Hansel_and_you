@@ -1,0 +1,162 @@
+<!-- LAUNCH -->
+<speak>
+  <p>
+    <prosody volume="x-loud">Hey there!
+      <break time="0.3s" /> </prosody>
+  </p>
+  <s>Welcome to Hansel and you.</s><s> Here you can dive straight into adventurous stories. </s>
+  <p>Explore awesome worlds with the power to shape them with your decisions. </p>
+  <s>Do you want to start now with our sample story?</s>
+  <s>Just say <break time="0.3s"/> <prosody volume="x-loud">start.</prosody></s>
+</speak>
+
+
+<!-- END SUCCESS -->
+<speak>
+  <p>
+    <prosody volume="x-loud">The key fits.</prosody>
+  </p>
+  <p>You turn it around and push the door open.</p>
+  <break time="0.5s" />
+
+  <p>With a sigh of relief,</p>
+  <p>you step out of the room you were trapped in</p>
+  <p>and take a deep breath of fresh spring air <s>and enjoy the sunshine.</s> </p>
+</speak>
+
+
+
+
+<!-- START OF STORY -->
+<speak>
+  <p>
+    <prosody volume="x-loud">You wake up in a room.</prosody>
+  </p>
+  <break time="0.3s" />
+  <p><s>It is dark and your legs feel numb.</s> You don’t know how long you’ve been away.</p>
+  <p>Looking around you see a rugged carpet on the floor
+    <break time="0.5s" /> and an old camping bed. </p>
+  <p><s>On the other side of the room, you find a closed door <break time="0.3s"/> out of rusted metal. </s>The few tiny windows are latticed with thick steel. </p>
+  <p>And there is a strange smell in the air.
+    <prosody volume="x-loud">It feels dangerous. </prosody>
+  </p>
+
+  <p>In the corner you see an old wardrobe.</p>
+
+  <p>Something inside you is telling you, that you have to get out of here as fast as possible. </p>
+  <p>
+    <prosody volume="x-loud">But where to start?</prosody>
+  </p>
+</speak>
+
+
+
+<!-- SEARCHING THE BED -->
+<speak>
+  <p>You're searching under the bed.</p>
+  <p>There is a little key. </p>
+  <p>You hold in your hand and look at it.</p>
+  <p>Maybe it fits in the door.</p>
+</speak>
+
+<!-- TRY THE WRONG, LITTLE KEY -->
+<speak>
+  <p>You try to open the door with the little key.</p>
+  <p>But it does not fit.</p>
+  <p>The door remains close.</p>
+  <p>Time is running.</p>
+  <break time="0.3s" />
+  <p>What to do next? </p>
+</speak>
+
+
+
+<!-- SEARCHING THE CARPET; FINDING THE NNOTE -->
+<speak>
+  <p>You're looking under the carpet.</p>
+  <p>Oh look! There is a little note.</p>
+  <p>In terrible handwriting it says</p>
+  <p>
+    <break time="0.5s" />
+    <s>Alive without breath,</s>
+    <s>As cold as death,</s>
+    <s>Never thirsty, ever drinking,</s>
+    <s>All in mail, never clinking.</s>
+  </p>
+  <break time="0.5s" />
+  <p>
+    <s>This riddle will help, that’s for sure.</s>
+    <break time="0.2s" />
+    <s>But how? </s>
+    <s>What are you going to do next?</s></p>
+</speak>
+
+
+<!-- READING THE RIDDLE -->
+<speak>
+  <p>The riddle says </p>
+  <break time="0.5s" />
+  <p>Alive without breath,</p>
+  <p>As cold as death,</p>
+  <p>Never thirsty, ever drinking,</p>
+  <p>All in mail, never clinking.</p>
+</speak>
+
+
+<!-- OPENING THE WARD ROBE -->
+<speak>
+  <p>Opening the wardrobe, you find a big old safe. </p>
+  <p>It has a lock, where you have to choose the right combination of
+    <prosody rate="x-slow">4 characters.</prosody>
+  </p>
+</speak>
+
+<!-- TRY SAFE WRONG -->
+<speak>
+  <p>This is wrong. </p>
+  <p>The safe won't open.</p>
+  <p>Try it with another combination </p>
+</speak>
+
+<!-- TRY SAFE, FIND KEY -->
+<speak>
+  <p>The safe opens, and you find a old rusted key.</p>
+  <p> It looks like this key would fit in a big door. </p>
+</speak>
+
+
+
+<!-- END DEATH -->
+<speak>
+  <p>Your eyes are flickering. </p>
+  <p> The amount of deadly gas in the room increases, </p>
+  <p>and your lungs are filling up with it. </p>
+  <break time="0.2s" />
+  <p> You loose conscious, and fall to the floor. </p>
+  <break time="0.5s" />
+  <p> Your adventure
+    <prosody rate="x-slow">ends here.</prosody>
+  </p>
+</speak>
+
+<!--ERROR HANDLERS -->
+<speak>
+  There is a time and place for doing that, but not now.
+</speak>
+
+<speak>
+  That is not wise. Maybe try something different.
+</speak>
+
+<speak>
+  I don’t think this is a good idea right now. Try something else.
+</speak>
+
+<speak>
+  <s>You shouldn’t do that.</s>
+  <s> And to be honest, you can’t.</s>
+</speak>
+
+<speak>
+  It seems like that there is nothing here. Search at another place.
+</speak>
