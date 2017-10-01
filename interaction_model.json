@@ -1,0 +1,90 @@
+{
+  "intents": [
+    {
+      "name": "AMAZON.CancelIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.HelpIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.PauseIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.ResumeIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.StopIntent",
+      "samples": []
+    },
+    {
+      "name": "Bed",
+      "samples": [
+        "Search the bed",
+        "Check the bed",
+        "Bed"
+      ],
+      "slots": []
+    },
+    {
+      "name": "Carpet",
+      "samples": [
+        "Look under the carpet",
+        "Carpet"
+      ],
+      "slots": []
+    },
+    {
+      "name": "Door",
+      "samples": [
+        "Open the door",
+        "Open door",
+        "Door"
+      ],
+      "slots": []
+    },
+    {
+      "name": "Note",
+      "samples": [
+        "read the note",
+        "What says the note"
+      ],
+      "slots": []
+    },
+    {
+      "name": "Safe",
+      "samples": [
+        "Use the password {password} to open the safe",
+        "Try the combination {password} for the safe"
+      ],
+      "slots": [
+        {
+          "name": "password",
+          "type": "AMAZON.Animal",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "StartIntent",
+      "samples": [
+        "let's start a new adventure",
+        "Start a new story",
+        "Begin a new story",
+        "Begin",
+        "Start"
+      ],
+      "slots": []
+    },
+    {
+      "name": "Wardrobe",
+      "samples": [
+        "Explore the wardrobe"
+      ],
+      "slots": []
+    }
+  ]
+}
