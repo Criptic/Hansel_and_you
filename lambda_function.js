@@ -10,7 +10,6 @@ var http = require("https");
 
 var APP_ID = undefined;  // TODO replace with your app ID (OPTIONAL).
 var speechOutput = '';
-var interval;
 
 const LAUNCH_ID = 1;
 const START_ID = 2;
@@ -42,7 +41,8 @@ var handlers = {
 
       this.attributes["timeoutcounter"] = 0;
 
-      playAudioWithId(this, LAUNCH_ID).then(self.emit(':responseReady'));
+      var self = this;
+      playAudioWithId(this, LAUNCH_ID).then(() => {self.emit(':responseReady')});
     },
 	'AMAZON.HelpIntent': function () {
         speechOutput = '';
@@ -70,40 +70,59 @@ var handlers = {
   },
 	"Bed": function () {
       this.attributes["little_key"].found = true;
-    	playAudioWithId(this, BED_ID).then(self.emit(':responseReady'));
+      var self = this;
+    	playAudioWithId(this, BED_ID).then(() => {self.emit(':responseReady')});
     },
   "Note": function () {
+      var self = this;
       if(!this.attributes["carpet"].noteIsThere){
         var cardTitle = 'Riddle on the Note';
         var cardContent = 'Alive without breath,\nAs cold as death;\nNever thirsty, ever drinking,\nAll in mail never clinking.';
-        playAudioWithId(this, NOTE_ID).then(this.emit(':askWithCard', speechOutput, cardTitle, cardContent));
+        playAudioWithId(this, NOTE_ID).then(() => {this.emit(':askWithCard', speechOutput, cardTitle, cardContent)});
       }else{
-      	playAudioWithId(this, ERROR_ID).then(self.emit(':responseReady'));
+      	playAudioWithId(this, ERROR_ID).then(() => {self.emit(':responseReady')});
       }
     },
   "Wardrobe": function () {
-      playAudioWithId(this, WARDROBE_ID).then(self.emit(':responseReady'));
+      var self = this;
+      playAudioWithId(this, WARDROBE_ID).then(() => {self.emit(':responseReady')});
     },
 	"Carpet": function () {
+      var self = this;
       this.attributes["carpet"].noteIsThere = false;
-      playAudioWithId(this, CARPET_ID).then(self.emit(':responseReady'));
+      playAudioWithId(this, CARPET_ID).then(() => {self.emit(':responseReady')});
     },
 	"Door": function () {
+      var self = this;
   		if(this.attributes["big_key"].found){
-        playAudioWithId(this, DOOR_BIG_KEY_ID).then(this.emit(':tell', ""));
+        playAudioWithId(this, DOOR_BIG_KEY_ID).then(() => {endSession(self)});
       }else if(this.attributes["little_key"].found){
-        playAudioWithId(this, DOOR_LITTLE_KEY_ID).then(self.emit(':responseReady'));
+        playAudioWithId(this, DOOR_LITTLE_KEY_ID).then(() => {self.emit(':responseReady')});
       }else{
-        playAudioWithId(this, ERROR_ID).then(self.emit(':responseReady'));
+        playAudioWithId(this, ERROR_ID).then(() => {self.emit(':responseReady')});
       }
     },
 	"StartIntent": function () {
+      this.attributes["carpet"] = {};
+      this.attributes["carpet"].noteIsThere = true;
+
+      this.attributes["little_key"] = {};
+      this.attributes["little_key"].found = false;
+
+      this.attributes["big_key"] = {};
+      this.attributes["big_key"].found = false;
+
+      this.attributes["timeoutcounter"] = 0;
+
       var self = this;
-      startColorAnimation()
-        .then(playAudioWithId(self, START_ID))
-        .then(self.emit(':responseReady'));
+      setColorAnimation(4, 0)
+        .then(() => {setColorAnimation(3, 1)
+        .then(()=>{playAudioWithId(self, START_ID)
+        .then(() => {self.emit(':responseReady')})})});
+
     },
   "Safe": function () {
+      var self = this;
   		var passwordSlotRaw = this.event.request.intent.slots.password.value;
   		console.log(passwordSlotRaw);
   		var passwordSlot = resolveCanonical(this.event.request.intent.slots.password);
@@ -112,13 +131,14 @@ var handlers = {
     	if(passwordSlot.toLowerCase() == "fish"){
         this.attributes["big_key"].found = true;
         //TODO Hue blink?
-        playAudioWithId(this, SAFE_RIGHT_ID);
+        playAudioWithId(this, SAFE_RIGHT_ID).then(() => {self.emit(':responseReady')});
       }else{
-        playAudioWithId(this, SAFE_WRONG_ID);
+        playAudioWithId(this, SAFE_WRONG_ID).then(() => {self.emit(':responseReady')});
       }
     },
 	"Unhandled": function () {
-      playAudioWithId(this, ERROR_ID);
+      var self = this;
+      playAudioWithId(this, ERROR_ID).then(() => {self.emit(':responseReady')});
   }
 };
 
@@ -137,7 +157,7 @@ function playAudioWithId(self, id){
   var closeSession = false;
   self.attributes["timeoutcounter"] = self.attributes["timeoutcounter"] + 1;
   if(self.attributes["timeoutcounter"] > 15){
-    id = 12;
+    id = 4;
     closeSession = true;
   }
 
@@ -157,10 +177,10 @@ function playAudioWithId(self, id){
             if(data){
               self.attributes['url'] = data.Item.audio;
               speechOutput = '<audio src="'+ data.Item.audio +'" />';
-              self.response.speak(speechOutput);
+              self.response.speak(speechOutput).listen();
             }
             if(closeSession){
-              this.emit(':tell', "");
+              endSession(self);
             }
             fulfill();
         }
@@ -168,12 +188,18 @@ function playAudioWithId(self, id){
   });
 }
 
-function startColorAnimation(){
+function endSession(self){
+  setColorAnimation(3, 0)
+    .then(()=>{setColorAnimation(4, 1)
+    .then(()=>{self.response.speak("")})});
+}
+
+function setColorAnimation(sensor, state){
   var options = {
     "method": "PUT",
     "hostname": "api.meethue.com",
     "port": null,
-    "path": "/v2/bridges/001788fffe200470/nS7IqOD-R8KClDzm3Wq7Oqo-yq2QRpOCXEnRn2d3/sensors/2",
+    "path": "/v2/bridges/001788fffe200470/nS7IqOD-R8KClDzm3Wq7Oqo-yq2QRpOCXEnRn2d3/sensors/" + sensor,
     "headers": {
       "Authorization": "Bearer mSVWYub0KNB1dSDjDrbjRg8sac2J",
       "Content-Type": "application/json"
@@ -191,7 +217,7 @@ function startColorAnimation(){
       res.on("end", fulfill);
     });
 
-    req.write('{state:{flag:true}}');
+    req.write('{"state":{"status":'+state+'}}');
     req.end();
   });
 }

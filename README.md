@@ -10,6 +10,10 @@ Easy. You might already know some kind of interactive adventure books or somethi
 To achieve this goal we decided to develop an Amazon Alexa Skill that will enable that kind of experience for you. On the one hand, you can listen to the story just like a regular Audiobook. But on the other hand you are the one who decides how the story will continue. What will happen to the world? What will happen to the characters? You have the power. Because it is your story.
 
 ## The technical part
+
+### Architecture Overview
+![Architectual Structure](https://github.com/Criptic/Hansel_and_you/blob/master/architecture.png)
+
 ### The Skill set
 The user can interact with objects inside of the story and can perform different actions with these objects. Depending of the story details a user as already uncovered he gets access to additional objects, actions and informationen via a set of attribute.
 
