@@ -6,58 +6,43 @@ var welcomeReprompt = "sample re-prompt text";
 "use strict";
 var Alexa = require('alexa-sdk');
 var AWS = require("aws-sdk");
+var http = require("https");
+
 var APP_ID = undefined;  // TODO replace with your app ID (OPTIONAL).
 var speechOutput = '';
 var interval;
 
-var http = require("https");
+const LAUNCH_ID = 1;
+const START_ID = 2;
+const BED_ID = 3;
+const ERROR_ID = 12;
+const DOOR_LITTLE_KEY_ID = 5;
+const DOOR_BIG_KEY_ID = 6;
+const CARPET_ID = 7;
+const NOTE_ID = 8;
+const WARDROBE_ID = 9;
+const SAFE_WRONG_ID = 10;
+const SAFE_RIGHT_ID = 11;
 
-var options = {
-  "method": "PUT",
-  "hostname": "api.meethue.com",
-  "port": null,
-  "path": "/v2/bridges/001788fffe200470/nS7IqOD-R8KClDzm3Wq7Oqo-yq2QRpOCXEnRn2d3/groups/2/action",
-  "headers": {
-    "Authorization": "Bearer mSVWYub0KNB1dSDjDrbjRg8sac2J",
-    "Content-Type": "application/json"
-  }
-};
+AWS.config.update({
+  region: "eu-west-1",
+  endpoint: "dynamodb.eu-west-1.amazonaws.com"
+});
 
 var handlers = {
     'LaunchRequest': function () {
-      this.attributes["door"] = {};
-      this.attributes["door"].opened = false;
-
       this.attributes["carpet"] = {};
-      this.attributes["carpet"].keyIsThere = true;
+      this.attributes["carpet"].noteIsThere = true;
 
-      this.attributes["key"] = {};
-      this.attributes["key"].found = false;
+      this.attributes["little_key"] = {};
+      this.attributes["little_key"].found = false;
 
-      var self = this;
+      this.attributes["big_key"] = {};
+      this.attributes["big_key"].found = false;
 
-      AWS.config.update({
-        region: "eu-west-1",
-        endpoint: "dynamodb.eu-west-1.amazonaws.com"
-      });
+      this.attributes["timeoutcounter"] = 0;
 
-      var docClient = new AWS.DynamoDB.DocumentClient()
-      var params = {
-          TableName: "stories_audio_files",
-          Key:{ "id": 1 }
-      };
-
-      docClient.get(params, function(err, data) {
-          if (err) {
-              console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-              this.emit(':tell', "I couldn't load the story.");
-          } else {
-              self.attributes['url'] = data.Item.audio;
-              speechOutput = '<audio src="'+ data.Item.audio +'" />';
-              self.response.speak(speechOutput);
-              self.emit(':responseReady')
-          }
-      });
+      playAudioWithId(this, LAUNCH_ID).then(self.emit(':responseReady'));
     },
 	'AMAZON.HelpIntent': function () {
         speechOutput = '';
@@ -84,48 +69,56 @@ var handlers = {
       this.emit(':tell', speechOutput);
   },
 	"Bed": function () {
-    	speechOutput = "There’s a note under the bed with this sentence written on it: A key is hidden under the carpet.";
-      this.emit(":ask", speechOutput, speechOutput);
+      this.attributes["little_key"].found = true;
+    	playAudioWithId(this, BED_ID).then(self.emit(':responseReady'));
+    },
+  "Note": function () {
+      if(!this.attributes["carpet"].noteIsThere){
+        var cardTitle = 'Riddle on the Note';
+        var cardContent = 'Alive without breath,\nAs cold as death;\nNever thirsty, ever drinking,\nAll in mail never clinking.';
+        playAudioWithId(this, NOTE_ID).then(this.emit(':askWithCard', speechOutput, cardTitle, cardContent));
+      }else{
+      	playAudioWithId(this, ERROR_ID).then(self.emit(':responseReady'));
+      }
+    },
+  "Wardrobe": function () {
+      playAudioWithId(this, WARDROBE_ID).then(self.emit(':responseReady'));
     },
 	"Carpet": function () {
-      if(this.attributes["carpet"].keyIsThere){
-    	   speechOutput = "There is an old rusty key under the carpet. What do you want to do?";
-      }else{
-        speechOutput = "There is nothing here anymore.";
-      }
-
-      this.emit(":ask", speechOutput, speechOutput);
+      this.attributes["carpet"].noteIsThere = false;
+      playAudioWithId(this, CARPET_ID).then(self.emit(':responseReady'));
     },
 	"Door": function () {
-		var speechOutput = "";
-      if(this.attributes["key"].found){
-        this.attributes["door"].opened = true;
-        speechOutput = "With a sigh of relief you step out of the room you were trapped in and take a deep breath of fresh spring air and enjoy the sunshine.";
-        this.emit(":tell", speechOutput, speechOutput);
+  		if(this.attributes["big_key"].found){
+        playAudioWithId(this, DOOR_BIG_KEY_ID).then(this.emit(':tell', ""));
+      }else if(this.attributes["little_key"].found){
+        playAudioWithId(this, DOOR_LITTLE_KEY_ID).then(self.emit(':responseReady'));
       }else{
-        speechOutput = "The door is closed, you will need a key to open this door."
-        this.emit(":ask", speechOutput, speechOutput);
+        playAudioWithId(this, ERROR_ID).then(self.emit(':responseReady'));
       }
-    },
-	"Key": function () {
-		var speechOutput = "";
-    	//any intent slot variables are listed here for convenience
-      this.attributes["carpet"].keyIsThere = false;
-      this.attributes["key"].found = true;
-    	//Your custom intent handling goes here
-    	speechOutput = "You take the key.";
-        this.emit(":ask", speechOutput, speechOutput);
     },
 	"StartIntent": function () {
       var self = this;
-      startColorAnimation().then(() => {
-        speechOutput = "You wake up in a room. Looking around you see a rugged carpet on the floor, a bed and a closed door. What do you want to do?";
-        self.emit(':ask', speechOutput, speechOutput);
-      });
+      startColorAnimation()
+        .then(playAudioWithId(self, START_ID))
+        .then(self.emit(':responseReady'));
+    },
+  "Safe": function () {
+  		var passwordSlotRaw = this.event.request.intent.slots.password.value;
+  		console.log(passwordSlotRaw);
+  		var passwordSlot = resolveCanonical(this.event.request.intent.slots.password);
+  		console.log(passwordSlot);
+
+    	if(passwordSlot.toLowerCase() == "fish"){
+        this.attributes["big_key"].found = true;
+        //TODO Hue blink?
+        playAudioWithId(this, SAFE_RIGHT_ID);
+      }else{
+        playAudioWithId(this, SAFE_WRONG_ID);
+      }
     },
 	"Unhandled": function () {
-      var speechOutput = "The skill didn't quite understand what you wanted. Do you want to try something else?";
-      this.emit(':ask', speechOutput, speechOutput);
+      playAudioWithId(this, ERROR_ID);
   }
 };
 
@@ -136,7 +129,57 @@ exports.handler = (event, context) => {
     alexa.execute();
 };
 
+function playAudioWithId(self, id){
+  if(id == 12){
+    id = Math.random() * (15 - 12) + 12;
+  }
+
+  var closeSession = false;
+  self.attributes["timeoutcounter"] = self.attributes["timeoutcounter"] + 1;
+  if(self.attributes["timeoutcounter"] > 15){
+    id = 12;
+    closeSession = true;
+  }
+
+  var docClient = new AWS.DynamoDB.DocumentClient();
+  var params = {
+      TableName: "stories_audio_files",
+      Key:{ "id": id }
+  };
+
+  return new Promise(function (fulfill, reject){
+    docClient.get(params, function(err, data) {
+        if (err) {
+            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+            self.emit(':tell', "I couldn't load the story.");
+            reject();
+        } else {
+            if(data){
+              self.attributes['url'] = data.Item.audio;
+              speechOutput = '<audio src="'+ data.Item.audio +'" />';
+              self.response.speak(speechOutput);
+            }
+            if(closeSession){
+              this.emit(':tell', "");
+            }
+            fulfill();
+        }
+    });
+  });
+}
+
 function startColorAnimation(){
+  var options = {
+    "method": "PUT",
+    "hostname": "api.meethue.com",
+    "port": null,
+    "path": "/v2/bridges/001788fffe200470/nS7IqOD-R8KClDzm3Wq7Oqo-yq2QRpOCXEnRn2d3/sensors/2",
+    "headers": {
+      "Authorization": "Bearer mSVWYub0KNB1dSDjDrbjRg8sac2J",
+      "Content-Type": "application/json"
+    }
+  };
+
   return new Promise(function (fulfill, reject){
     var req = http.request(options, function (res) {
       var chunks = [];
@@ -148,7 +191,7 @@ function startColorAnimation(){
       res.on("end", fulfill);
     });
 
-    req.write('{"scene":"ktD4qe8pAqoL8C-"}');
+    req.write('{state:{flag:true}}');
     req.end();
   });
 }
