@@ -12,7 +12,11 @@ body{
 .navbar-brand {
   font-family: 'Roboto Mono', monospace;
   font-weight: bold;
-  font-size: 36px;
+  font-size: 48px;
+}
+
+.navbar .white{
+  color: white!important;
 }
 
 .heading-right{
@@ -23,12 +27,16 @@ body{
   margin-top: 120px;
 }
 
+.top-space-small{
+  margin-top:15px;
+}
+
 .top-space-large{
   margin-top: 240px;
 }
 
-.shift-right{
-  float: right;
+.shift-left{
+  float: left;
 }
 
 .book-small{
@@ -46,4 +54,22 @@ body{
 
 .btn-primary:hover {
   background-color: #249FAF !important;
+}
+
+#header{
+  background-image: url('./img/books.jpg');
+  opacity: 40%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  padding-bottom: 300px;
+}
+
+#header p {
+  background: rgb(40,40,40);
+  padding-top: 10px;
+  padding-bottom: 10px;
+  opacity: 0.85;
+  border-radius: 11px;
+  color: white;
 }
