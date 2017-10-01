@@ -16,3 +16,28 @@ body{
 .top-space{
   margin-top: 120px;
 }
+
+.top-space-large{
+  margin-top: 240px;
+}
+
+.shift-right{
+  float: right;
+}
+
+.book-small{
+  height: 250px;
+}
+
+.book-large{
+  height: 400px;
+}
+
+#get-started-btn{
+  background-color: #50E3C2;
+  border: none;
+}
+
+#get-started-btn:hover {
+  background-color: #249FAF;
+}
