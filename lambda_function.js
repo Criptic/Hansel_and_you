@@ -113,11 +113,12 @@ var handlers = {
       this.attributes["big_key"].found = false;
 
       this.attributes["timeoutcounter"] = 0;
-      
+
       var self = this;
-      setColorAnimation(1)
-        .then(() => {playAudioWithId(self, START_ID)
-          .then(() => {self.emit(':responseReady')})});
+      setColorAnimation(4, 0)
+        .then(() => {setColorAnimation(3, 1)
+        .then(()=>{playAudioWithId(self, START_ID)
+        .then(() => {self.emit(':responseReady')})})});
 
     },
   "Safe": function () {
@@ -188,15 +189,17 @@ function playAudioWithId(self, id){
 }
 
 function endSession(self){
-  setColorAnimation(0).then(()=>{self.response.speak("")});
+  setColorAnimation(3, 0)
+    .then(()=>{setColorAnimation(4, 1)
+    .then(()=>{self.response.speak("")})});
 }
 
-function setColorAnimation(state){
+function setColorAnimation(sensor, state){
   var options = {
     "method": "PUT",
     "hostname": "api.meethue.com",
     "port": null,
-    "path": "/v2/bridges/001788fffe200470/nS7IqOD-R8KClDzm3Wq7Oqo-yq2QRpOCXEnRn2d3/sensors/3",
+    "path": "/v2/bridges/001788fffe200470/nS7IqOD-R8KClDzm3Wq7Oqo-yq2QRpOCXEnRn2d3/sensors/" + sensor,
     "headers": {
       "Authorization": "Bearer mSVWYub0KNB1dSDjDrbjRg8sac2J",
       "Content-Type": "application/json"
@@ -214,9 +217,8 @@ function setColorAnimation(state){
       res.on("end", fulfill);
     });
 
-    //req.write('{"state":{"status":'+state+'}}');
-    //req.end();
-    fulfill();
+    req.write('{"state":{"status":'+state+'}}');
+    req.end();
   });
 }
 
