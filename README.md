@@ -12,6 +12,8 @@ To achieve this goal we decided to develop an Amazon Alexa Skill that will enabl
 ## The technical part
 ### The Skill set
 ### The voice of the story (Polly)
+The .mp3-files get created from text input via Polly. Polly is called in the db_manager.js. The created file is then uploaded to a bucket in S3 and gets an entry in a DynamoDB where the Alexa Lambda functions can look up the link to the audio files.
+
 ### Making decisions
 ### Bringing atmosphere (Phillips Hue)
 
