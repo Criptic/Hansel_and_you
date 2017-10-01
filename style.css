@@ -9,6 +9,12 @@ body{
   color: #282828;
 }
 
+.navbar-brand {
+  font-family: 'Roboto Mono', monospace;
+  font-weight: bold;
+  font-size: 36px;
+}
+
 .heading-right{
   text-align: right;
 }
