@@ -191,7 +191,8 @@ function playAudioWithId(self, id){
 function endSession(self){
   setColorAnimation(3, 0)
     .then(()=>{setColorAnimation(4, 1)
-    .then(()=>{self.response.speak("")})});
+    .then(()=>{self.response.speak("")
+    .then(()=>{self.emit(':responseReady')})})});
 }
 
 function setColorAnimation(sensor, state){
