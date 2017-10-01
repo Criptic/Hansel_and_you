@@ -1,0 +1,18 @@
+h1{
+  font-family: 'Lato', sans-serif;
+  font-weight: bold;
+  color: #50E3C2;
+}
+
+body{
+  font-family: 'Lato', sans-serif;
+  color: #282828;
+}
+
+.heading-right{
+  text-align: right;
+}
+
+.top-space{
+  margin-top: 120px;
+}
